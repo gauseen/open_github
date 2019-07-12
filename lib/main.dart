@@ -26,11 +26,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   List<Widget> pages = <Widget>[];
+  List<String> appBars = <String>[];
 
   @override
   void initState() {
-    pages = <Widget>[ NewsPage(), Text('2'), Text('3') ];
     super.initState();
+    pages = <Widget>[ NewsPage(), Text('Trending'), Text('Mine') ];
+    appBars = <String>[ 'News', 'Trending', 'Mine' ];
   }
 
   @override
@@ -38,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       // 页面 title
       appBar: AppBar(
-        title: Text('Open GitHub'),
+        title: Text(appBars[_currentIndex]),
       ),
       // 页面主要内容
       body: Container(

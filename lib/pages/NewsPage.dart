@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../utils/http.dart';
+import '../utils/common.dart';
+import '../api/events.dart';
 
 class NewsPage extends StatefulWidget {
   // NewsPage(Key key) : super(key: key);
@@ -10,28 +10,74 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
-  var count = 0;
+  int _currentPageNum = 0;
+  List newsList = [];
+  bool isLocked = false;
 
+  // 下拉加载
   Future<Null> _pullOfRefresh() async {
-    print('pull...');
-    dio.get('/test?tag=1').then((res) => res);
-    // await Future.delayed(Duration(seconds: 3));
+    List data = await fetchEvents(pageNum: 1);
+    setState(() {
+     newsList = data;
+    });
+    return null;
+  }
+
+  // 加载更多
+  Future<Null> _loadMore() async {
+    _currentPageNum++;
+    List data = await fetchEvents(pageNum: _currentPageNum);
+    setState(() {
+     newsList.addAll(data);
+    });
+    isLocked = false;
     return null;
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadMore();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      child: Container(
-        child: ListView.builder(
-          itemCount: 10,
-          itemBuilder: (BuildContext context, int index) {
-            return NewsItem(index: index,);
+    int lastIndex = newsList.length - 1;
+
+    return newsList.length == 0
+      ? centerLinearProgress(width: 300.0)
+      : RefreshIndicator(
+        child: NotificationListener<ScrollNotification>(
+          onNotification:  (ScrollNotification scrollInfo) {
+            if (!isLocked && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+              isLocked = true;
+              _loadMore();
+            }
+            return false;
           },
+          child: ListView.builder(
+            itemCount: newsList.length,
+            itemBuilder: (BuildContext context, int index) {
+              var item = newsList[index];
+              var itemActor = item['actor'];
+              var createTime = Utils.formatTime(DateTime.parse(item['created_at']));
+              // 不是最后一个
+              var notLast = lastIndex != index;
+
+              return notLast
+                ? NewsItem(
+                  index: index,
+                  avatarUrl: itemActor['avatar_url'],
+                  login: itemActor['login'],
+                  repoName: item['repo']['name'],
+                  createTime: createTime,
+                )
+                : centerLinearProgress();
+            },
+          ),
         ),
-      ),
-      onRefresh: _pullOfRefresh,
-    );
+        onRefresh: _pullOfRefresh,
+      );
   }
 }
 
@@ -40,32 +86,44 @@ class NewsItem extends StatelessWidget {
   NewsItem({
     Key key,
     this.index,
-    this.avatar,
-    this.name,
+    this.avatarUrl,
+    this.login,
     this.repoName,
     this.createTime,
   }) : super(key: key);
 
   final int index;
-  final String avatar;
-  final String name;
+  final String avatarUrl;
+  final String login;
   final String repoName;
   final String createTime;
-
-  List<Color> colors = <Color>[ Colors.yellow, Colors.blue, Colors.green, Colors.orange ];
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: FlutterLogo(size: 72.0),
-        title: Text('title $index'),
-        subtitle: Text('subtitle $index'),
-        trailing: Text('trailing $index'),
+        leading: FadeInImage.assetNetwork(
+          placeholder: 'assets/images/avatar.png',
+          image: '$avatarUrl'
+        ),
+        title: Text('$login'),
+        subtitle: Text('$repoName'),
+        trailing: Text('$createTime'),
         onTap: () {
           print('clicked');
         },
       ),
     );
   }
+}
+
+// 中间线型加载效果
+Widget centerLinearProgress({ double width = 150.0, double height = 3.0 }) {
+  return Center(
+            child: Container(
+              width: width,
+              height: height,
+              child: LinearProgressIndicator(),
+            ),
+          );
 }

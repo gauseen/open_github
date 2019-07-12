@@ -7,7 +7,7 @@ Dio _initDio() {
   // new dio instance to request token
   Dio tokenDio = new Dio();
   String token;
-  dio.options.baseUrl = 'https://www.baidu.com/';
+  dio.options.baseUrl = 'https://api.github.com';
   tokenDio.options = dio.options;
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
     print('send request：path: ${options.path}，baseURL: ${options.baseUrl}');
