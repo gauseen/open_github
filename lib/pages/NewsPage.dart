@@ -18,7 +18,7 @@ class _NewsPageState extends State<NewsPage> {
   Future<Null> _pullOfRefresh() async {
     List data = await fetchEvents(pageNum: 1);
     setState(() {
-     newsList = data;
+      newsList = data;
     });
     return null;
   }
@@ -28,7 +28,7 @@ class _NewsPageState extends State<NewsPage> {
     _currentPageNum++;
     List data = await fetchEvents(pageNum: _currentPageNum);
     setState(() {
-     newsList.addAll(data);
+      newsList.addAll(data);
     });
     isLocked = false;
     return null;
@@ -42,42 +42,46 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   Widget build(BuildContext context) {
-    int lastIndex = newsList.length - 1;
+    int length = newsList.length;
 
-    return newsList.length == 0
-      ? centerLinearProgress(width: 300.0)
-      : RefreshIndicator(
-        child: NotificationListener<ScrollNotification>(
-          onNotification:  (ScrollNotification scrollInfo) {
-            if (!isLocked && scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-              isLocked = true;
-              _loadMore();
-            }
-            return false;
-          },
-          child: ListView.builder(
-            itemCount: newsList.length,
-            itemBuilder: (BuildContext context, int index) {
-              var item = newsList[index];
-              var itemActor = item['actor'];
-              var createTime = Utils.formatTime(DateTime.parse(item['created_at']));
-              // 不是最后一个
-              var notLast = lastIndex != index;
+    return newsList.isEmpty
+        ? centerProgress(width: 300.0, type: 'circular')
+        : RefreshIndicator(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                if (!isLocked &&
+                    scrollInfo.metrics.pixels ==
+                        scrollInfo.metrics.maxScrollExtent) {
+                  isLocked = true;
+                  _loadMore();
+                }
+                return false;
+              },
+              child: ListView.builder(
+                itemCount: length + 1,
+                itemBuilder: (BuildContext context, int index) {
 
-              return notLast
-                ? NewsItem(
-                  index: index,
-                  avatarUrl: itemActor['avatar_url'],
-                  login: itemActor['login'],
-                  repoName: item['repo']['name'],
-                  createTime: createTime,
-                )
-                : centerLinearProgress();
-            },
-          ),
-        ),
-        onRefresh: _pullOfRefresh,
-      );
+                  if (index == length) {
+                    return centerProgress();
+                  }
+
+                  var item = newsList[index];
+                  var itemActor = item['actor'];
+                  var createTime =
+                      Utils.formatTime(DateTime.parse(item['created_at']));
+
+                  return NewsItem(
+                    index: index,
+                    avatarUrl: itemActor['avatar_url'],
+                    login: itemActor['login'],
+                    repoName: item['repo']['name'],
+                    createTime: createTime,
+                  );
+                },
+              ),
+            ),
+            onRefresh: _pullOfRefresh,
+          );
   }
 }
 
@@ -103,9 +107,7 @@ class NewsItem extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: FadeInImage.assetNetwork(
-          placeholder: 'assets/images/avatar.png',
-          image: '$avatarUrl'
-        ),
+            placeholder: 'assets/images/avatar.png', image: '$avatarUrl'),
         title: Text('$login'),
         subtitle: Text('$repoName'),
         trailing: Text('$createTime'),
@@ -118,12 +120,15 @@ class NewsItem extends StatelessWidget {
 }
 
 // 中间线型加载效果
-Widget centerLinearProgress({ double width = 150.0, double height = 3.0 }) {
+Widget centerProgress(
+    {double width = 150.0, double height = 3.0, String type = 'linear'}) {
   return Center(
-            child: Container(
-              width: width,
-              height: height,
-              child: LinearProgressIndicator(),
-            ),
-          );
+    child: Container(
+      width: width,
+      height: height,
+      child: type == 'linear'
+          ? LinearProgressIndicator()
+          : CircularProgressIndicator(),
+    ),
+  );
 }
