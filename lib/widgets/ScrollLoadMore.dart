@@ -76,7 +76,7 @@ class _ScrollLoadMoreState extends State<ScrollLoadMore> {
             ),
             onRefresh: _pullOfRefresh,
           )
-      : centerProgress(width: 300.0, type: 'circular');
+      : centerProgress(width: 25.0, height: 25.0, type: 'circular');
   }
 }
 

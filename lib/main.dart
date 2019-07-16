@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:open_github/pages/RepoIndex.dart';
 import 'pages/NewsPage.dart';
 import 'pages/TrendingPage.dart';
+
+import 'pages/RepoIndex.dart';
 
 void main() => runApp(OpenGitHub());
 
@@ -74,8 +77,8 @@ RouteFactory _generateRoutes() {
     final Map<String, dynamic> arguments = settings.arguments;
     Widget page;
     switch (settings.name) {
-      case '/':
-        page = Text('Page /');
+      case RepoIndex.routeName:
+        page = RepoIndex(arguments['fullName']);
         break;
       case '/b':
         page = Text('Page b');
