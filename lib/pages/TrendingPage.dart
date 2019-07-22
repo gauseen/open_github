@@ -8,9 +8,14 @@ class TrendingPage extends StatefulWidget {
   _TrendingPageState createState() => _TrendingPageState();
 }
 
-class _TrendingPageState extends State<TrendingPage> {
+class _TrendingPageState extends State<TrendingPage> with AutomaticKeepAliveClientMixin {
+  // 保持页面滚动状态
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    print('_TrendingPageState');
     return ScrollLoadMore(
       fetchDataHandler: fetchEvents,
       itemBuilder: (item) {

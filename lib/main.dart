@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:open_github/pages/RepoIndex.dart';
 import 'pages/NewsPage.dart';
 import 'pages/TrendingPage.dart';
+import 'pages/MinePage.dart';
 
 import 'pages/RepoIndex.dart';
 
@@ -30,14 +31,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  List<Widget> homePages = <Widget>[];
+  PageController _pageController = PageController(
+    initialPage: 0,
+  );
+  List<Widget> _homePages = <Widget>[];
   List<String> appBars = <String>[];
 
   @override
   void initState() {
     super.initState();
-    homePages = <Widget>[NewsPage(), TrendingPage(), Text('Mine')];
+    _homePages = <Widget>[NewsPage(), TrendingPage(), MinePage()];
     appBars = <String>['News', 'Trending', 'Mine'];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _pageController.dispose();
   }
 
   @override
@@ -48,13 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(appBars[_currentIndex]),
       ),
       // 页面主要内容
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 5.0),
-        // 根据 _currentIndex 显示对应的 Widget
-        child: IndexedStack(
-          children: homePages,
-          index: _currentIndex,
-        ),
+      // PageView 保持页面状态
+      body: PageView(
+        controller: _pageController,
+        children: _homePages,
+        physics: NeverScrollableScrollPhysics(),
       ),
       // 底部导航按钮
       bottomNavigationBar: BottomNavigationBar(
@@ -62,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _currentIndex,
         // 点击导航时的回调函数
         onTap: (int index) {
+          _pageController.jumpToPage(index);
           setState(() {
             _currentIndex = index;
           });
