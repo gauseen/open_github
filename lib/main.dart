@@ -31,9 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
-  PageController _pageController = PageController(
-    initialPage: 0,
-  );
+  PageController _pageController = PageController();
   List<Widget> _homePages = <Widget>[];
   List<String> appBars = <String>[];
 
@@ -47,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
   }
 
   @override
@@ -62,21 +59,32 @@ class _MyHomePageState extends State<MyHomePage> {
       body: PageView(
         controller: _pageController,
         children: _homePages,
-        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: _onPageChanged,
+        physics: NeverScrollableScrollPhysics(), // 是否可左右滑动
       ),
       // 底部导航按钮
       bottomNavigationBar: BottomNavigationBar(
         items: _generateBottomNavItem(),
         currentIndex: _currentIndex,
         // 点击导航时的回调函数
-        onTap: (int index) {
-          _pageController.jumpToPage(index);
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+        onTap: _onTap,
       ),
     );
+  }
+
+  // 底部导航回调
+  _onTap(int index) {
+    _pageController.jumpToPage(index);
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  // 页面左右滑动时回调
+  _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
 

@@ -16,6 +16,8 @@ class _NewsPageState extends State<NewsPage> with AutomaticKeepAliveClientMixin 
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    
     return ScrollLoadMore(
       fetchDataHandler: fetchEvents,
       itemBuilder: (item) {

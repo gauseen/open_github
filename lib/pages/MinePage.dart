@@ -22,10 +22,10 @@ class _MinePageState extends State<MinePage>
     setState(() {
       userData = userModel.toJson();
       _list = [
-        { 'value': userData['followers'], 'text': 'followers' },
-        { 'value': userData['following'], 'text': 'following' },
-        { 'value': userData['publicRepos'], 'text': 'repos' },
-        { 'value': userData['publicGists'], 'text': 'gists' },
+        {'value': userData['followers'], 'text': 'followers'},
+        {'value': userData['following'], 'text': 'following'},
+        {'value': userData['publicRepos'], 'text': 'repos'},
+        {'value': userData['publicGists'], 'text': 'gists'},
       ];
     });
   }
@@ -38,6 +38,8 @@ class _MinePageState extends State<MinePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return userData.isNotEmpty
         ? Align(
             alignment: Alignment.topLeft,
@@ -58,7 +60,10 @@ class _MinePageState extends State<MinePage>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(userData['username']),
+                            Text(
+                              userData['username'],
+                              style: TextStyle(fontSize: 20.0),
+                            ),
                             Text(userData['location']),
                             Text(userData['createdAt']),
                           ],

@@ -4,7 +4,6 @@ import '../utils/http.dart';
 Future fetchUsers(String username) async {
   return await dio.get('/users/$username').then((res) => res.data);
 }
-
 class UserModel {
   UserModel({
     this.username,

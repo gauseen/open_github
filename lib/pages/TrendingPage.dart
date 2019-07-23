@@ -15,6 +15,8 @@ class _TrendingPageState extends State<TrendingPage> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    
     print('_TrendingPageState');
     return ScrollLoadMore(
       fetchDataHandler: fetchEvents,
