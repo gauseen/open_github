@@ -5,7 +5,10 @@ class RepoFiles extends StatefulWidget {
   _RepoFilesState createState() => _RepoFilesState();
 }
 
-class _RepoFilesState extends State<RepoFiles> {
+class _RepoFilesState extends State<RepoFiles> with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -15,8 +18,12 @@ class _RepoFilesState extends State<RepoFiles> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    
     print('print info page files');
 
-    return Text('info page files');
+    return Center(
+      child: Text('coding'),
+    );
   }
 }

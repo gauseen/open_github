@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/Progress.dart';
+
 class ScrollLoadMore extends StatefulWidget {
   ScrollLoadMore({
     this.fetchDataHandler,
@@ -69,7 +71,7 @@ class _ScrollLoadMoreState extends State<ScrollLoadMore> {
                 itemCount: length + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index == length) {
-                    return centerProgress();
+                    return centerProgress(width: 150.0, height: 3.0, type: 'linear');
                   }
 
                   var itemData = dataList[index];
@@ -80,20 +82,6 @@ class _ScrollLoadMoreState extends State<ScrollLoadMore> {
             ),
             onRefresh: _pullOfRefresh,
           )
-      : centerProgress(width: 25.0, height: 25.0, type: 'circular');
+      : centerProgress();
   }
-}
-
-// 中间线型加载效果
-Widget centerProgress(
-    {double width = 150.0, double height = 3.0, String type = 'linear'}) {
-  return Center(
-    child: Container(
-      width: width,
-      height: height,
-      child: type == 'linear'
-          ? LinearProgressIndicator()
-          : CircularProgressIndicator(),
-    ),
-  );
 }

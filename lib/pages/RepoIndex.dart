@@ -31,7 +31,7 @@ class _RepoIndexState extends State<RepoIndex> {
         ),
         body: TabBarView(
           children: [
-            RepoInfo(),
+            RepoInfo(widget._repoFullName),
             RepoFiles(),
           ],
         ),

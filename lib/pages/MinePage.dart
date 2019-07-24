@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/AvatarIcon.dart';
+import '../widgets/Progress.dart';
 import '../api/users.dart';
 
 class MinePage extends StatefulWidget {
@@ -85,7 +86,7 @@ class _MinePageState extends State<MinePage>
               ),
             ),
           )
-        : Center(child: CircularProgressIndicator());
+        : Center(child: centerProgress());
   }
 }
 
