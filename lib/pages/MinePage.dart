@@ -18,7 +18,8 @@ class _MinePageState extends State<MinePage>
   List _list = [];
 
   _fetchUsers() async {
-    userModel = UserModel.fromJson(await fetchUsers('gauseen'));
+    
+    userModel = UserModel.fromJson(await fetchUsers());
     setState(() {
       userData = userModel.toJson();
       _list = [

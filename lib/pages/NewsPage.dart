@@ -59,7 +59,7 @@ class NewsItem extends StatelessWidget {
             },
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(15.0, 5.0, 0.0, 5.0),
+            padding: EdgeInsets.fromLTRB(15.0, 5.0, 0.0, 12.0),
             child: Text(
               '$repoName',
               maxLines: 2,

@@ -21,6 +21,8 @@ class _ScrollLoadMoreState extends State<ScrollLoadMore> {
 
   // 下拉加载
   Future<Null> _pullOfRefresh() async {
+    if (!mounted) return null;
+    
     List data = await widget.fetchDataHandler(pageNum: 1);
     setState(() {
       dataList = data;

@@ -1,9 +1,27 @@
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../utils/http.dart';
 
+// 登录
+Future login(String username, String password) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  var str = '$username:$password';
+  var bytes = utf8.encode(str);
+  var base64Str = base64.encode(bytes);
+
+  await prefs.setString('authorization', 'Basic $base64Str');
+
+  return dio.get('/user');
+}
+
 // 获取用户信息
-Future fetchUsers(String username) async {
+Future fetchUsers() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var username = prefs.getString('username');
   return await dio.get('/users/$username').then((res) => res.data);
 }
+
 class UserModel {
   UserModel({
     this.username,

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Dio dio = _initDio();
 
@@ -10,50 +11,27 @@ Dio _initDio() {
   dio.options.baseUrl = 'https://api.github.com';
   tokenDio.options = dio.options;
   dio.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options) {
-    print('send request：path: ${options.path}，baseURL: ${options.baseUrl}');
+    print(
+        'send request：path: ${options.path}，baseURL: ${options.baseUrl}，token: ${token}');
 
-    if (token == 't') {
-      print('no token，request token firstly...');
+    if (token == null) {
+      print('----------- no token -----------');
       // lock the dio.
       dio.lock();
-      return tokenDio.get('/token').then((d) {
-        options.headers['token'] = token = d.data['data']['token'];
-        print('request token succeed, value: ' + d.data['data']['token']);
-        print(
-            'continue to perform request：path:${options.path}，baseURL:${options.path}');
+      return SharedPreferences.getInstance().then((prefs) {
+        options.headers['Authorization'] =
+            token = prefs.getString('authorization');
+
+        print('token $token');
         return options;
       }).whenComplete(() => dio.unlock()); // unlock the dio
     } else {
-      options.headers['token'] = token;
+      options.headers['Authorization'] = token;
       return options;
     }
-  }, onError: (DioError error) {
-    // Assume 401 stands for token expired
-    if (error.response?.statusCode == 401) {
-      RequestOptions options = error.response.request;
-      // If the token has been updated, repeat directly.
-      if (token != options.headers['token']) {
-        options.headers['token'] = token;
-        // repeat
-        return dio.request(options.path, options: options);
-      }
-      // update token and repeat
-      // Lock to block the incoming request until the token updated
-      dio.lock();
-      dio.interceptors.responseLock.lock();
-      dio.interceptors.errorLock.lock();
-      return tokenDio.get('/token').then((d) {
-        //update token
-        options.headers['token'] = token = d.data['data']['token'];
-      }).whenComplete(() {
-        dio.unlock();
-        dio.interceptors.responseLock.unlock();
-        dio.interceptors.errorLock.unlock();
-      }).then((e) {
-        // repeat
-        return dio.request(options.path, options: options);
-      });
-    }
+  }, onError: (DioError error) async {
+    print('----------- http error -----------');
+    token = null;
     return error;
   }));
 
