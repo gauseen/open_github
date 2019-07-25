@@ -63,8 +63,14 @@ android {
 
             // minifyEnabled true
             // useProguard true
+            // shrinkResources false
 
             // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // dependencies {
+            //     implementation 'android.arch.lifecycle:common-java8:1.1.0'
+            //     implementation 'com.android.support:support-fragment:28.0.0'
+	        // }
         }
     }
 }

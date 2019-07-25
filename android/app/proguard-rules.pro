@@ -1,5 +1,4 @@
-# Flutter Wrapper 减小 apk 文件的大小或者防止代码被逆向破解
-
+# Flutter Wrapper
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.**  { *; }
 -keep class io.flutter.util.**  { *; }
